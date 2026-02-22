@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Produit | Cuvéria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { gold: '#c5a059', dark: '#030303', panel: '#0a0a0a' },
+                    fontFamily: { sans: ['Montserrat', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
+                    animation: { 'fade-in': 'fadeIn 1.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } } }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; }
+        body { background-color: #030303; color: #ffffff; min-height: 100vh; overflow-x: hidden; }
+        
+        @media (pointer: fine) {
+            body { cursor: none; }
+            a, button, summary, details, input { cursor: none !important; }
+            #custom-cursor {
+                position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: var(--gold);
+                border-radius: 50%; pointer-events: none; z-index: 10000;
+                transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s, border 0.3s;
+            }
+            #custom-cursor.hovering {
+                width: 45px; height: 45px; background: transparent; border: 1px solid var(--gold);
+            }
+        }
+
+        #page-transition {
+            position: fixed; inset: 0; background: #030303; z-index: 99998;
+            opacity: 1; pointer-events: none; transition: opacity 0.8s ease-in-out;
+            display: block;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .btn-luxe-gold { 
+            display: block; width: 100%; text-align: center; padding: 20px 0; 
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 4px; font-weight: 600;
+            color: #000; background: var(--gold); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            text-decoration: none; border-radius: 2px; border: none;
+            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.25);
+        }
+        @media (min-width: 768px) {
+            .btn-luxe-gold { padding: 22px 0; font-size: 0.75rem; letter-spacing: 5px; }
+        }
+        .btn-luxe-gold:hover { 
+            background: #e8c784; box-shadow: 0 10px 40px rgba(232, 199, 132, 0.6); transform: translateY(-3px);
+        }
+
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        .back-link { font-size: 0.5rem; letter-spacing: 4px; text-transform: uppercase; color: #888; transition: 0.4s; z-index: 100;}
+        @media (min-width: 768px) { .back-link { font-size: 0.55rem; letter-spacing: 5px; color: #666; } }
+        .back-link:hover { color: #fff; }
+
+        .trust-item { border-top: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; align-items: center; gap: 12px; font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        @media (min-width: 768px) { .trust-item { padding: 15px 0; gap: 15px; font-size: 0.6rem; letter-spacing: 2px; } }
+    </style>
+</head>
+<body class="selection:bg-gold selection:text-black">
+
+    <div id="custom-cursor" class="hidden md:block"></div>
+    <div id="page-transition"></div>
+
+    <div id="age-modal" class="fixed inset-0 z-[200] bg-dark flex items-center justify-center px-6 hidden opacity-0 transition-opacity duration-1000">
+        <div class="max-w-md w-full text-center">
+            <h2 class="font-serif text-4xl md:text-5xl text-gold uppercase tracking-[0.2em] mb-6">Cuvéria</h2>
+            <div class="w-12 h-[1px] bg-gold/30 mx-auto mb-6"></div>
+            <p class="text-[0.65rem] md:text-xs text-gray-400 mb-8 md:mb-10 font-light tracking-[0.15em] md:tracking-widest uppercase">Veuillez confirmer votre date de naissance</p>
+            <div class="mb-8">
+                <input type="number" id="year-check" placeholder="AAAA" class="w-full bg-transparent border-b border-white/20 text-white text-center text-2xl md:text-3xl pb-4 outline-none focus:border-gold transition-colors font-light tracking-widest placeholder:text-gray-700">
+            </div>
+            <p id="age-error" class="text-red-500 text-[0.55rem] md:text-[0.6rem] mb-8 hidden uppercase tracking-[0.2em]">L'accès est strictement réservé aux majeurs.</p>
+            <button onclick="verifyAge()" class="btn-luxe-gold interactable w-full cursor-pointer">Découvrir le flacon</button>
+            <p class="text-[0.5rem] md:text-[0.55rem] text-gray-600 uppercase tracking-widest mt-10 md:mt-12 font-light">L'abus d'alcool est dangereux pour la santé.</p>
+        </div>
+    </div>
+
+    <header class="fixed w-full py-6 md:py-8 px-4 md:px-12 flex justify-between items-center z-50 top-0 pointer-events-none bg-gradient-to-b from-[#030303]/90 to-transparent">
+        <a href="index.html" onclick="transitionToHome(event)" class="interactable back-link flex items-center gap-2 md:gap-4 pointer-events-auto text-white/90">
+            <span class="text-xl md:text-2xl leading-none -mt-1">‹</span> RETOUR
+        </a>
+        <div class="font-serif text-lg md:text-xl tracking-[0.2em] md:tracking-[0.3em] uppercase text-white/90">Cuvéria</div>
+    </header>
+
+    <div class="flex flex-col lg:flex-row w-full min-h-screen relative">
+        
+        <div class="w-full lg:w-1/2 flex flex-col bg-[#0a0a0a]" id="image-stack"></div>
+
+        <div class="w-full lg:w-1/2 bg-dark p-6 md:p-16 lg:p-24 lg:sticky lg:top-0 lg:h-screen overflow-y-auto no-scrollbar relative z-10">
+            <div class="animate-fade-in pb-32 lg:pb-32 mt-12 md:mt-20 lg:mt-0">
+                
+                <p id="p-sub" class="text-gray-500 text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.3em] md:tracking-[0.4em] mb-4 md:mb-6 font-light"></p>
+                <h1 id="p-title" class="font-serif text-3xl md:text-5xl lg:text-6xl text-white leading-tight mb-6 md:mb-8"></h1>
+                
+                <div class="flex items-center gap-3 md:gap-4 mb-8 md:mb-10 pb-8 md:pb-10 border-b border-white/10">
+                    <p id="p-price" class="text-2xl md:text-3xl font-serif text-white tracking-wider"></p>
+                    <div class="w-[1px] h-5 md:h-6 bg-white/20"></div>
+                    <div class="text-[0.5rem] md:text-[0.55rem] text-gold uppercase tracking-[0.1em] md:tracking-[0.2em]">Disponibilité Limitée</div>
+                </div>
+
+                <div id="p-desc" class="mb-12 md:mb-16"></div>
+
+                <div class="mt-12 md:mt-16">
+                    <div class="trust-item">
+                        <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        Livraison sur mesure
+                    </div>
+                    <div class="trust-item">
+                        <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Paiement hautement sécurisé
+                    </div>
+                    <div class="trust-item border-b border-white/5">
+                        <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        Conditionnement d'excellence
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fixed bottom-4 md:bottom-6 inset-x-4 md:left-auto md:right-[5%] md:w-[40%] z-50 pointer-events-auto">
+        <div class="absolute inset-0 bg-dark/80 backdrop-blur-md -m-6 rounded-2xl z-[-1] pointer-events-none" style="mask-image: linear-gradient(to top, black 50%, transparent);"></div>
+        <a id="p-link" href="#" target="_blank" class="interactable btn-luxe-gold shadow-[0_15px_40px_rgba(197,160,89,0.3)]">
+            Procéder à l'acquisition
+        </a>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const transitionEl = document.getElementById('page-transition');
+            setTimeout(() => {
+                transitionEl.style.opacity = '0';
+                setTimeout(() => transitionEl.style.display = 'none', 800);
+            }, 100);
+            checkAgeModal();
+        });
+
+        function checkAgeModal() {
+            if (localStorage.getItem('ageVerified') !== 'true') {
+                const modal = document.getElementById('age-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 100);
+            }
+        }
+
+        function verifyAge() {
+            const y = document.getElementById('year-check').value;
+            if (new Date().getFullYear() - y >= 18) {
+                localStorage.setItem('ageVerified', 'true');
+                const modal = document.getElementById('age-modal');
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 1000);
+            } else {
+                document.getElementById('age-error').classList.remove('hidden');
+            }
+        }
+
+        function transitionToHome(e) {
+            e.preventDefault(); 
+            const transitionEl = document.getElementById('page-transition');
+            transitionEl.style.display = 'block';
+            setTimeout(() => {
+                transitionEl.style.opacity = '1';
+                transitionEl.style.pointerEvents = 'all';
+            }, 10);
+            setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        }
+
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        function attachCursorEvents() {
+            if(window.innerWidth > 768) {
+                document.querySelectorAll('.interactable, summary, input').forEach(el => {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+                });
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+
+        function formatTextWithAccordions(text) {
+            if (!text) return "";
+            let introText = [];
+            let accordions = [];
+            let currentTitle = "";
+            let currentContent = [];
+            let parsingIntro = true;
+
+            let lines = text.split('\n');
+
+            lines.forEach(line => {
+                if (line.trim().length === 0) return;
+
+                let titleMatch = line.match(/^\*\*(.*?)\*\*(.*)$/);
+                if (titleMatch && titleMatch[2].trim().length < 5) {
+                    parsingIntro = false;
+                    if (currentTitle) { accordions.push({ title: currentTitle, content: currentContent.join('') }); }
+                    currentTitle = titleMatch[1].replace(':', '').trim();
+                    currentContent = [];
+                } else {
+                    let formattedLine = line;
+                    if (line.trim().startsWith('-')) {
+                        formattedLine = `<li class="pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-[#c5a059] mb-3"><span class="text-gray-300 text-xs md:text-sm">${line.replace('-', '').trim()}</span></li>`;
+                    } else {
+                        formattedLine = `<p class="mb-4 text-gray-400 font-light text-xs md:text-[0.85rem] leading-relaxed">${line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-serif tracking-wide text-sm md:text-base">$1</strong>')}</p>`;
+                    }
+
+                    if (parsingIntro) { introText.push(formattedLine); } 
+                    else { currentContent.push(formattedLine); }
+                }
+            });
+
+            if (currentTitle) { accordions.push({ title: currentTitle, content: currentContent.join('') }); }
+
+            let html = introText.join('');
+            
+            if (accordions.length > 0) {
+                html += '<div class="mt-10 md:mt-12 border-t border-white/10">';
+                accordions.forEach(acc => {
+                    html += `
+                        <details class="group border-b border-white/10 py-5 md:py-6 cursor-pointer md:cursor-none transition-all">
+                            <summary class="interactable flex justify-between items-center font-serif text-white uppercase tracking-[0.15em] md:tracking-[0.2em] text-[0.65rem] md:text-[0.7rem] outline-none">
+                                ${acc.title}
+                                <span class="transition-transform duration-500 group-open:rotate-45 text-gold text-2xl md:text-3xl font-light leading-none">+</span>
+                            </summary>
+                            <div class="mt-6 md:mt-8 mb-4 pl-1 md:pl-2 space-y-2 origin-top animate-fade-in">
+                                ${acc.content}
+                            </div>
+                        </details>
+                    `;
+                });
+                html += '</div>';
+            }
+            return html;
+        }
+
+        document.getElementById('p-title').innerText = params.get('title');
+        document.getElementById('p-sub').innerText = params.get('sub');
+        document.getElementById('p-price').innerText = params.get('price');
+        document.getElementById('p-link').href = params.get('link');
+        document.getElementById('p-desc').innerHTML = formatTextWithAccordions(params.get('desc'));
+
+        const mainImg = params.get('img');
+        const extraString = params.get('extra');
+        const imageStack = document.getElementById('image-stack');
+        
+        let allImgs = [mainImg];
+        if (extraString) { allImgs = [mainImg, ...extraString.split(',')].filter(Boolean); }
+
+        allImgs.forEach((src) => {
+            if (!src || src === "null") return;
+            let imgContainer = document.createElement('div');
+            imgContainer.className = 'w-full h-[55vh] lg:h-screen flex items-center justify-center p-6 md:p-16 border-b border-white/5 relative bg-[#0a0a0a] overflow-hidden group';
+            
+            let glow = document.createElement('div');
+            glow.className = 'absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none z-0 transition duration-1000 group-hover:scale-110';
+            glow.innerHTML = '<div class="w-[200px] md:w-[300px] h-[200px] md:h-[300px] bg-gold rounded-full blur-[100px] md:blur-[150px]"></div>';
+            
+            let img = document.createElement('img');
+            img.src = src;
+            img.className = 'w-full h-full object-contain z-10 drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition duration-700 hover:scale-105';
+            
+            imgContainer.appendChild(glow);
+            imgContainer.appendChild(img);
+            imageStack.appendChild(imgContainer);
+        });
+
+        attachCursorEvents();
+    </script>
+</body>
+</html>
