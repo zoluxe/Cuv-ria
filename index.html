@@ -9,7 +9,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { gold: '#c5a059', dark: '#030303', panel: '#0a0a0a' },
+                    colors: { gold: '#c5a059', dark: '#030303', panel: '#0a0a0a', danger: '#e3342f' },
                     fontFamily: { sans: ['Montserrat', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
                     animation: {
                         'ken-burns': 'kenBurns 20s ease-out infinite alternate',
@@ -59,6 +59,36 @@
         @media (min-width: 768px) { ::-webkit-scrollbar { display: block; } }
         ::-webkit-scrollbar-track { background: #030303; }
         ::-webkit-scrollbar-thumb { background: theme('colors.gold'); }
+
+        #custom-cursor { z-index: 999999 !important; pointer-events: none; }
+
+        .product-card { position: relative; }
+        
+        .product-card.highlighted .image-container img {
+            transform: scale(1.15) translateY(-10px);
+            filter: drop-shadow(0 20px 40px rgba(197, 160, 89, 0.4));
+        }
+        .badge-rarete {
+            position: absolute;
+            top: 0; right: 0;
+            background-color: var(--gold);
+            color: #030303;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 6px 12px;
+            z-index: 20;
+            font-weight: 600;
+        }
+
+        .product-card::after {
+            content: ''; position: absolute; top: 30%; left: 50%;
+            transform: translate(-50%, -50%); width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.2) 0%, transparent 70%);
+            z-index: 0; opacity: 0; transition: opacity 0.8s ease;
+        }
+        .product-card:hover::after { opacity: 1; }
+        .product-card.highlighted::after { opacity: 1; width: 180px; height: 180px; background: radial-gradient(circle, rgba(197, 160, 89, 0.3) 0%, transparent 70%); }
     </style>
 </head>
 <body class="antialiased selection:bg-gold selection:text-black">
@@ -82,7 +112,6 @@
     <div class="relative w-full max-w-[100vw] overflow-x-hidden flex flex-col">
 
         <header class="absolute top-0 w-full z-50 pt-8 pb-16 bg-gradient-to-b from-[#030303]/90 via-[#030303]/60 to-transparent">
-            
             <div class="md:hidden flex flex-col items-center w-full px-4 gap-4">
                 <div class="text-center">
                     <h1 class="font-serif text-3xl tracking-[0.2em] text-white uppercase leading-none">Cuvéria</h1>
@@ -97,42 +126,53 @@
 
             <nav class="hidden md:flex justify-center items-center gap-12 text-[0.65rem] uppercase tracking-[0.4em] text-white/90">
                 <a href="#boutique" class="interactable hover:text-gold transition duration-300">Collection</a>
-                
                 <div class="text-center px-8">
                     <h1 class="font-serif text-4xl tracking-[0.25em] text-white uppercase leading-none">Cuvéria</h1>
                     <p class="text-[0.5rem] tracking-[0.8em] uppercase mt-2 text-white/50 font-light">Wine & Spirits</p>
                 </div>
-                
                 <a href="javascript:void(0)" onclick="openModal('history-modal')" class="interactable hover:text-gold transition duration-300">Maison</a>
                 <a href="javascript:void(0)" onclick="openModal('contact-modal')" class="interactable hover:text-gold transition duration-300">Contact</a>
             </nav>
-
         </header>
 
-        <section class="relative h-[85vh] md:h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-    
-    <div class="z-20 text-center px-4 mt-20 reveal-item visible" style="transition-delay: 1s;">
-        <p class="text-[0.55rem] md:text-[0.65rem] tracking-[0.3em] md:tracking-[0.5em] uppercase text-white/70 mb-4">L'excellence en héritage</p>
-        <h2 class="font-serif italic text-4xl md:text-8xl mb-10 text-white font-light leading-tight">Sélection<br class="md:hidden"> d’Exception</h2>
-        <a href="#boutique" class="btn-luxe interactable">Découvrir les millésimes</a>
-    </div>
-    
-    <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 bg-black/40 z-10"></div> 
-        
-        <img src="https://cdn.pixabay.com/photo/2016/01/05/09/24/cave-1122165_1280.jpg" 
-             class="w-full h-full object-cover animate-ken-burns opacity-80" 
-             style="object-position: center;"
-             alt="Cave">
-    </div>
-</section>
+        <section class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+            <div class="absolute inset-0 z-30 opacity-[0.15] pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+
+            <div class="z-40 text-center px-4 reveal-item">
+                <h2 class="font-serif italic text-5xl md:text-[7rem] mb-12 text-white font-light tracking-tight">
+                    Sélection d'exception
+                </h2>
+                <div class="mt-12">
+                    <a href="#boutique" class="btn-luxe interactable px-12">Aller à la cave</a>
+                </div>
+            </div>
+            
+            <div class="absolute inset-0 z-0">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#030303] z-10 pointer-events-none"></div>
+                <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-70" style="transform: translateZ(0); will-change: transform;">
+                    <source src="hero-cuveria.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 opacity-30">
+                <div class="w-[1px] h-12 bg-gradient-to-b from-gold to-transparent"></div>
+            </div>
+        </section>
 
         <main id="boutique" class="pt-20 md:pt-40 pb-16 md:pb-20 w-full max-w-[90rem] mx-auto px-6 lg:px-12 bg-transparent">
-            <div class="text-center mb-16 md:mb-32 reveal-item">
+            <div class="text-center mb-12 md:mb-20 reveal-item">
                 <h3 class="font-serif text-3xl md:text-4xl italic text-white mb-4">La Cave Privée</h3>
                 <div class="w-8 h-[1px] bg-gold/50 mx-auto mb-4"></div>
                 <p class="text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.2em] md:tracking-[0.3em] text-gray-500">Acquisitions & Éditions Limitées</p>
             </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-12 mb-16 md:mb-24 reveal-item" id="filter-bar">
+                <button onclick="filterProducts(event, 'all')" class="filter-btn text-gold border-gold interactable text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.2em] border-b pb-1 transition-all">Collection</button>
+                <button onclick="filterProducts(event, 'champagne')" class="filter-btn text-gray-500 border-transparent hover:text-white interactable text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.2em] border-b pb-1 transition-all">Champagnes</button>
+                <button onclick="filterProducts(event, 'vin')" class="filter-btn text-gray-500 border-transparent hover:text-white interactable text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.2em] border-b pb-1 transition-all">Grands Crus</button>
+                <button onclick="filterProducts(event, 'spiritueux')" class="filter-btn text-gray-500 border-transparent hover:text-white interactable text-[0.55rem] md:text-[0.65rem] uppercase tracking-[0.2em] border-b pb-1 transition-all">Spiritueux</button>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-20 md:gap-y-24" id="product-container"></div>
         </main>
 
@@ -163,7 +203,9 @@
             </div>
         </footer>
 
-    </div> <div id="history-modal" class="fixed inset-0 modal-bg flex items-center justify-center px-4 md:px-6 overflow-y-auto py-12 md:py-20">
+    </div> 
+    
+    <div id="history-modal" class="fixed inset-0 modal-bg flex items-center justify-center px-4 md:px-6 overflow-y-auto py-12 md:py-20">
         <div class="max-w-3xl w-full text-center relative mt-8 md:mt-0">
             <button onclick="closeModals()" class="interactable absolute -top-12 md:top-0 right-2 md:right-0 text-white/50 hover:text-gold text-4xl font-light transition">&times;</button>
             <p class="text-[0.55rem] md:text-[0.65rem] tracking-[0.3em] md:tracking-[0.4em] uppercase text-gold mb-4 md:mb-6">Genèse</p>
@@ -173,7 +215,7 @@
                 <p>Intrigué, j’en ai parlé à mon père. Passionné et connaisseur, il m’a transmis les fondamentaux : comprendre un grand vin, respecter un spiritueux, reconnaître l’exception. À ses côtés, j’ai appris que chaque bouteille raconte une origine, un savoir-faire et une époque.</p>
                 <p>Peu à peu, cette curiosité est devenue une véritable passion — pour la dégustation, mais aussi pour la collection de produits rares.</p>
                 <p class="text-white text-base md:text-lg font-serif italic pt-6 border-t border-white/10 mt-6">
-                    "Aujourd’hui, <span class="gold-text not-italic">Cuvéria</span> est née de cette transmission : une quête d’excellence dédiée aux bouteilles d’exception."
+                    "Aujourd’hui, <span class="text-gold not-italic">Cuvéria</span> est née de cette transmission : une quête d’excellence dédiée aux bouteilles d’exception."
                 </p>
             </div>
         </div>
@@ -224,24 +266,20 @@
             }
         });
 
-        const cursor = document.getElementById('custom-cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        function attachCursorEvents() {
-            if(window.innerWidth > 768) {
-                document.querySelectorAll('.interactable, .product-card').forEach(el => {
-                    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        window.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('custom-cursor');
+            if (cursor) {
+                requestAnimationFrame(() => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
                 });
             }
-        }
+        });
 
         const descMurakami = `**Dom Pérignon Rosé – Édition Limitée par Takashi Murakami**\nUne spectaculaire rencontre entre l’audace intemporelle du Dom Pérignon Rosé et l’univers vibrant de l'artiste contemporain Takashi Murakami. Cette édition exclusive célèbre la créativité, le raffinement absolu et la puissance d’expression d'un millésime d'exception.\n\n**Caractéristiques :**\n- **Origine :** France, Champagne\n- **Millésime :** 2010\n- **Cépages :** Pinot Noir (majoritaire) & Chardonnay\n- **Édition :** Limitée, coffret et flacon au design exclusif signé Takashi Murakami\n\n**Notes de Dégustation :**\n- **La Robe :** Un rose cuivré éclatant aux reflets dorés.\n- **Le Nez :** Un bouquet captivant mêlant framboise mûre, fraise sauvage et figue fraîche, délicatement rehaussé de fleurs séchées et d'épices douces.\n- **La Bouche :** Intense, charnue et d'une précision remarquable. La texture satinée s'étire vers une tension minérale vibrante, s'achevant sur une amertume noble teintée de cacao.\n\n**Accords Mets & Vins :** Idéal sur un carpaccio de bœuf de Kobe, un foie gras poêlé, une gastronomie asiatique subtilement épicée ou de délicats desserts aux fruits rouges.`;
+        const descMurakamiBlanc = `**Dom Pérignon Vintage Blanc – Édition Takashi Murakami**\nUne collaboration artistique exceptionnelle révélant des notes florales et une minéralité intense, magnifiée par le génie de Takashi Murakami.\n\n**Caractéristiques :**\n- **Origine :** France, Champagne\n- **Cépages :** Chardonnay & Pinot Noir\n- **Édition :** Limitée Blanc par Takashi Murakami\n\n**Notes de Dégustation :**\n- **La Robe :** Or lumineux aux reflets verts.\n- **Le Nez :** Floral et fruité, s'ouvrant sur la fraîcheur de l'amande douce.\n- **La Bouche :** Vibrant, salin et d'une ampleur infinie.\n\n**Accords Mets & Vins :** Idéal sur des fruits de mer délicats ou un carpaccio de Saint-Jacques.`;
         const descDomPV = `**Dom Pérignon Vintage – L'Harmonie Plénière**\nChaque millésime Dom Pérignon est une création singulière, témoignant d'une année unique. Ce champagne Brut incarne l'engagement absolu de la Maison : ne proposer que l'excellence des meilleures vendanges, offrant un équilibre parfait entre intensité aromatique et grande finesse.\n\n**Caractéristiques :**\n- **Origine :** France, Champagne\n- **Cépages :** Assemblage secret et harmonieux de Pinot Noir et Chardonnay\n- **Potentiel de garde :** Exceptionnel (10 à 20 ans)\n\n**Notes de Dégustation :**\n- **La Robe :** Or pâle, traversée d'une effervescence fine, lumineuse et persistante.\n- **Le Nez :** Une ouverture éclatante sur des notes d'agrumes et de fruits à chair blanche, évoluant vers des arômes torréfiés, d'amande douce et de brioche toastée.\n- **La Bouche :** Une attaque ample et veloutée. Le vin se déploie avec une élégance rare, soutenu par une acidité ciselée et une salinité vibrante en finale.\n\n**Accords Mets & Vins :** Sublime avec une dégustation de caviar royal, des huîtres charnues, des langoustines rôties ou un risotto aux truffes blanches.`;
-        const descCristal = `**Louis Roederer Cristal – La Quintessence du Champagne**\nCréée en 1876 pour le Tsar Alexandre II, la cuvée Cristal est le joyau de la Maison Louis Roederer. Élaborée uniquement lors des "grandes années", cette cuvée de prestige est issue des meilleurs Grands Crus du domaine, offrant une pureté et une élégance inégalées à travers le monde.\n\n**Caractéristiques :**\n- **Origine :** France, Champagne (Grands Crus exclusivement)\n- **Cépages :** Pinot Noir (60%) & Chardonnay (40%)\n- **Vieillissement :** 6 années en cave, suivies de 8 mois de repos après dégorgement\n\n**Notes de Dégustation :**\n- **La Robe :** Jaune paille aux reflets ambrés, animée par une bulle ultra-fine et dynamique.\n- **Le Nez :** Complexe et intense. De sublimes notes de pomme cuite, de noisette grillée, de miel d'acacia et de subtiles touches crayeuses.\n- **La Bouche :** Une texture soyeuse, presque charnelle. L'harmonie est totale entre la vinosité structurée du Pinot Noir et la fraîcheur incisive du Chardonnay. La finale est majestueuse.\n\n**Accords Mets & Vins :** Un accord magistral avec des noix de Saint-Jacques poêlées, un homard breton, un turbot sauce mousseline ou un vieux Comté affiné.`;
+        const descCristal = `**Louis Roederer Cristal – La Quintessence du Champagne**\nCréée en 1876 pour le Tsar Alexandre II, la cuvée Cristal est le joyau de la Maison Louis Roederer. Élaborée uniquement lors des "grandes années", cette cuvée de prestige est issue des meilleurs Grands Crus du domaine, offrant une pureté et une élégance inégalées à travers le monde.\n\n**Caractéristiques :**\n- **Origine :** France, Champagne (Grands Crus exclusivement)\n- **Cépages :** Pinot Noir (60%) & Chardonnay (40%)\n- **Vieillissement :** 6 années en cave, suivies de 8 mois de repos après dégorgement\n\n**Notes de Dégustation :**\n- **La Robe :** Jaune paille aux reflets ambrés, animée par une bulle ultra-fine et dynamique.\n- **Le Nez :** Complexe et intense. De sublimes notes de pomme cuite, de noisette grillée, de miel d'acacia et de subtiles touches crayeuses.\n- **La Bouche :** Une texture soyeuse, almost charnelle. L'harmonie est totale entre la vinosité structurée du Pinot Noir et la fraîcheur incisive du Chardonnay. La finale est majestueuse.\n\n**Accords Mets & Vins :** Un accord magistral avec des noix de Saint-Jacques poêlées, un homard breton, un turbot sauce mousseline ou un vieux Comté affiné.`;
         const descChartreuseVerte = `**Chartreuse VEP Verte – L'Élixir des Sommets**\nSecret jalousement gardé par les Pères Chartreux, la VEP Verte est une icône de puissance et de mystère. Son vieillissement Exceptionnellement Prolongé en foudres de chêne lui confère une patine hors du commun, sublimant la recette ancestrale des 130 plantes.\n\n**Caractéristiques :**\n- **Origine :** France, Isère\n- **Type :** Liqueur d'herbes (54 % vol.)\n- **Particularité :** Vieillissement prolongé (VEP) en foudres de chêne\n\n**Notes de Dégustation :**\n- **La Robe :** Vert émeraude profond et cristallin.\n- **Le Nez :** Un souffle balsamique mêlant menthe fraîche, chlorophylle et épices rares, nuancé par des touches de miel.\n- **La Bouche :** Une attaque monumentale. La complexité végétale se déploie avec une chaleur enveloppante pour une finale à la longueur infinie.\n\n**Accords :** À savourer pure et légèrement rafraîchie pour un instant de méditation absolue.`;
         const descChartreuseJaune = `**Chartreuse VEP Jaune – La Douceur Solaire**\nVersion plus moelleuse et délicate de sa grande sœur verte, la VEP Jaune est un bijou de velouté. Son séjour prolongé sous bois calme le feu de l'alcool pour laisser place à une richesse aromatique d'une élégance et d'une finesse rares.\n\n**Caractéristiques :**\n- **Origine :** France, Isère\n- **Type :** Liqueur d'herbes (42 % vol.)\n- **Particularité :** Vieillissement Exceptionnellement Prolongé\n\n**Notes de Dégustation :**\n- **La Robe :** Or intense aux reflets chauds et brillants.\n- **Le Nez :** Un bouquet suave de miel, de fleurs séchées et de safran, délicatement boisé par les années de garde.\n- **La Bouche :** Ronde et harmonieuse. Une texture soyeuse qui enrobe le palais de saveurs miellées et d'épices douces.\n\n**Accords :** Le digestif d'exception par excellence, idéal avec des desserts fins ou pour clore un repas gastronomique.`;
         const descMacallan = `**The Macallan 18 Years Old 2007 – Diamonds Are Forever**\nUne édition collector rendant hommage au plus célèbre agent secret. Ce single malt d'exception unit l'héritage cinématographique de James Bond au savoir-faire inégalé de Macallan dans la maturation en fûts de chêne assaisonnés au Sherry.\n\n**Caractéristiques :**\n- **Origine :** Speyside, Écosse\n- **Distillerie :** The Macallan (Millésime 2007)\n- **Édition :** Limitée James Bond 60th Anniversary\n\n**Notes de Dégustation :**\n- **La Robe :** Ambre profond aux reflets d'acajou.\n- **Le Nez :** Une symphonie de fruits secs, d'écorce d'orange confite et de chêne noble, soutenue par une pointe de vanille.\n- **La Bouche :** Riche et onctueuse. Le palais découvre des notes de chocolat noir, de caramel au beurre salé et d'épices boisées.\n\n**Accords :** Dégustation pure ou accompagnée d'un cigare de haute lignée pour un moment privilégié.`;
@@ -250,31 +288,89 @@
         const descCorton = `**Corton Grand Cru – Château de Bligny**\nLe Corton est l'unique Grand Cru rouge de la Côte de Beaune. Issu de la colline historique de Corton, ce vin du Château de Bligny exprime toute la majesté d'un terroir d'exception, alliant puissance et élégance intemporelle.\n\n**Caractéristiques :**\n- **Appellation :** Corton Grand Cru\n- **Domaine :** Château de Bligny (Bourgogne)\n- **Cépage :** Pinot Noir de haute sélection\n\n**Notes de Dégustation :**\n- **La Robe :** Pourpre profond aux reflets de jeunesse violacés.\n- **Le Nez :** Un bouquet complexe de fruits noirs, d'épices, de cuir noble et une délicate touche de sous-bois.\n- **La Bouche :** Une architecture imposante. Le vin est plein, structuré et doté d'une profondeur remarquable qui laisse présager un grand avenir.`;
 
         const products = [
-            { img: 'dompr.jpg', title: 'Dom Perignon Murakami Rose', sub: 'Champagne Millésime 2010', desc: descMurakami, price: '550 €', link: 'https://buy.stripe.com/9B600keZt4Jb0T74jb6AM0h', extra: ['dompma.jpg', 'dompmb.jpg'] },
-            { img: 'dompv.jpg', title: 'Dom Perignon Vintage Champagne Brut', sub: 'Champagne Millésime', desc: descDomPV, price: '240 €', link: 'https://buy.stripe.com/28EcN67x15NfatH6rj6AM0g', extra: [] },
-            { img: 'cr.jpg', title: 'Louis Roederer Cristal 75cl', sub: 'Champagne Millésime', desc: descCristal, price: '300 €', link: 'https://buy.stripe.com/8x2cN6dVpejL7hvg1T6AM0f', extra: ['cristb.jpg', 'crist1.jpg'] },
-            { img: 'vosne.jpg', title: 'Vosne-Romanée Les Malconsorts', sub: 'Millésime 1971', desc: descVosne, price: '850 €', link: 'https://buy.stripe.com/aFafZi5oTcbD7hv9Dv6AM0j', extra: [] },
-            { img: 'nuit.jpg', title: 'Nuits-Saint-Georges Les Meurgers', sub: 'Millésime 1969', desc: descNuits, price: '350 €', link: 'https://buy.stripe.com/3cI28s8B53F745j4jb6AM0l', extra: [] },
-            { img: 'corton.jpg', title: 'Chateau de Bligny Corton Grand Cru', sub: 'Millésime 1990', desc: descCorton, price: '150 €', link: 'https://buy.stripe.com/7sY3cw2cH6RjgS56rj6AM0k', extra: [] },
-            { img: 'chartreuse.jpg', title: 'Chartreuse VEP Verte', sub: 'Verte - Millésime 2025', desc: descChartreuseVerte, price: '430 €', link: 'https://buy.stripe.com/8x28wQ18DdfH59ng1T6AM0i', extra: ['vepvp.jpg','vepva.jpg'] },
-            { img: 'vepjaune.jpg', title: 'Chartreuse VEP Jaune', sub: 'Jaune - Millésime 2025', desc: descChartreuseJaune, price: '450 €', link: 'https://buy.stripe.com/aFafZidVpa3v0T79Dv6AM0e', extra: ['vepjf.jpg','vepjb.jpg'] },
-            { img: 'macallan.jpg', title: 'Macallan 2007 18 years old Diamonds Are Forever', sub: '18 years old', desc: descMacallan, price: '1450 €', link: 'https://buy.stripe.com/9B600kbNhcbDcBP02V6AM0m', extra: ['mcb.jpg', 'mcbb.jpg','mcbf.jpg'] }
+            { img: 'dompr.jpg', title: 'Dom Perignon Murakami Rose', sub: 'Champagne Millésime 2010', desc: descMurakami, price: '550 €', link: 'https://buy.stripe.com/9B600keZt4Jb0T74jb6AM0h', extra: ['dompma.jpg', 'dompmb.jpg'], category: 'champagne' },
+            { img: 'mublanc.jpg', title: 'Dom Perignon Murakami Blanc', sub: 'Champagne Édition Limitée', desc: descMurakamiBlanc, price: '380 €', link: 'https://buy.stripe.com/bJe8wQdVp4Jb31faHz6AM0n', extra: ['mublancb.jpg','mubb.jpg'], category: 'champagne' }, 
+            { img: 'dompv.jpg', title: 'Dom Perignon Vintage Champagne Brut', sub: 'Champagne Millésime', desc: descDomPV, price: '240 €', link: 'https://buy.stripe.com/28EcN67x15NfatH6rj6AM0g', extra: [], category: 'champagne' },
+            { img: 'cr.jpg', title: 'Louis Roederer Cristal 75cl', sub: 'Champagne Millésime', desc: descCristal, price: '300 €', link: 'https://buy.stripe.com/8x2cN6dVpejL7hvg1T6AM0f', extra: ['cristb.jpg', 'crist1.jpg'], category: 'champagne' },
+            { img: 'vosne.jpg', title: 'Vosne-Romanée Les Malconsorts', sub: 'Millésime 1971', desc: descVosne, price: '850 €', link: 'https://buy.stripe.com/aFafZi5oTcbD7hv9Dv6AM0j', extra: [], category: 'vin', highlight: true, badgeText: 'Rareté Absolue' },
+            { img: 'nuit.jpg', title: 'Nuits-Saint-Georges Les Meurgers', sub: 'Millésime 1969', desc: descNuits, price: '350 €', link: 'https://buy.stripe.com/3cI28s8B53F745j4jb6AM0l', extra: [], category: 'vin' },
+            { img: 'corton.jpg', title: 'Chateau de Bligny Corton Grand Cru', sub: 'Millésime 1990', desc: descCorton, price: '150 €', link: 'https://buy.stripe.com/7sY3cw2cH6RjgS56rj6AM0k', extra: [], category: 'vin' },
+            { img: 'chartreuse.jpg', title: 'Chartreuse VEP Verte', sub: 'Verte - Millésime 2025', desc: descChartreuseVerte, price: '430 €', link: 'https://buy.stripe.com/8x28wQ18DdfH59ng1T6AM0i', extra: ['vepvp.jpg','vepva.jpg'], category: 'spiritueux' },
+            { img: 'vepjaune.jpg', title: 'Chartreuse VEP Jaune', sub: 'Jaune - Millésime 2025', desc: descChartreuseJaune, price: '450 €', link: 'https://buy.stripe.com/aFafZidVpa3v0T79Dv6AM0e', extra: ['vepjf.jpg','vepjb.jpg'], category: 'spiritueux' },
+            { img: 'macallan.jpg', title: 'Macallan 2007 18 years old Diamonds Are Forever', sub: '18 years old', desc: descMacallan, price: '1450 €', link: 'https://buy.stripe.com/9B600kbNhcbDcBP02V6AM0m', extra: ['mcb.jpg', 'mcbb.jpg','mcbf.jpg'], category: 'spiritueux' }
         ];
 
         const container = document.getElementById('product-container');
-        products.forEach((p, index) => {
-            const html = `
-                <div class="group flex flex-col items-center product-card reveal-item cursor-pointer md:cursor-none" onclick="transitionToProduct(${index})">
-                    <div class="relative w-full max-w-[220px] md:max-w-full mx-auto aspect-[3/4] flex items-center justify-center mb-6 md:mb-8 bg-transparent transition duration-700 overflow-hidden rounded-sm pointer-events-none">
-                        <img src="${p.img}" alt="${p.title}" class="h-[80%] object-contain transition duration-1000 group-hover:scale-[1.03] md:group-hover:-translate-y-2 z-10 relative">
+        let isFirstLoad = true;
+
+        function renderProducts(filter = 'all') {
+            container.innerHTML = '';
+            let itemsToRender = [];
+
+            if (filter === 'all') {
+                ['champagne', 'vin', 'spiritueux'].forEach(cat => {
+                    const catItems = products
+                        .map((p, index) => ({ data: p, originalIndex: index }))
+                        .filter(item => item.data.category === cat);
+
+                    let selectedItem;
+                    if (isFirstLoad) {
+                        selectedItem = catItems.find(item => item.data.highlight) || catItems[Math.floor(Math.random() * catItems.length)];
+                    } else {
+                        selectedItem = catItems[Math.floor(Math.random() * catItems.length)];
+                    }
+
+                    if (selectedItem) itemsToRender.push(selectedItem);
+                });
+                isFirstLoad = false;
+            } else {
+                products.forEach((p, index) => {
+                    if (p.category === filter) {
+                        itemsToRender.push({ data: p, originalIndex: index });
+                    }
+                });
+            }
+
+            itemsToRender.forEach(item => {
+                const p = item.data;
+                const index = item.originalIndex;
+                
+                const highlightClass = p.highlight ? 'highlighted' : '';
+                const badgeHtml = (p.highlight && p.badgeText) ? `<div class="badge-rarete">${p.badgeText}</div>` : '';
+
+                const html = `
+                    <div class="group flex flex-col items-center product-card reveal-item cursor-pointer md:cursor-none ${highlightClass}" onclick="transitionToProduct(${index})">
+                        <div class="relative w-full max-w-[220px] md:max-w-full mx-auto aspect-[3/4] flex items-center justify-center mb-6 md:mb-8 bg-transparent transition duration-700 overflow-visible rounded-sm pointer-events-none image-container">
+                            ${badgeHtml}
+                            <img src="${p.img}" alt="${p.title}" class="h-[80%] object-contain transition duration-1000 group-hover:scale-[1.03] md:group-hover:-translate-y-2 z-10 relative">
+                        </div>
+                        <p class="text-[0.55rem] md:text-[0.6rem] text-gold uppercase tracking-[0.2em] mb-2 md:mb-3 font-light pointer-events-none">${p.sub}</p>
+                        <h4 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 text-center group-hover:text-gold transition-colors duration-500 pointer-events-none px-4">${p.title}</h4>
+                        <span class="text-[0.5rem] md:text-[0.55rem] uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-500 border-b border-transparent group-hover:border-white pb-1 pointer-events-none">Explorer</span>
                     </div>
-                    <p class="text-[0.55rem] md:text-[0.6rem] text-gold uppercase tracking-[0.2em] mb-2 md:mb-3 font-light pointer-events-none">${p.sub}</p>
-                    <h4 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 text-center group-hover:text-gold transition-colors duration-500 pointer-events-none px-4">${p.title}</h4>
-                    <span class="text-[0.5rem] md:text-[0.55rem] uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-500 border-b border-transparent group-hover:border-white pb-1 pointer-events-none">Explorer</span>
-                </div>
-            `;
-            container.innerHTML += html;
-        });
+                `;
+                container.innerHTML += html;
+            });
+
+            document.querySelectorAll('.reveal-item').forEach(item => {
+                observer.observe(item);
+            });
+            
+            attachCursorEvents();
+        }
+
+        function filterProducts(event, category) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-gold', 'border-gold');
+                btn.classList.add('text-gray-500', 'border-transparent');
+            });
+            
+            event.currentTarget.classList.remove('text-gray-500', 'border-transparent');
+            event.currentTarget.classList.add('text-gold', 'border-gold');
+
+            renderProducts(category);
+        }
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -285,11 +381,16 @@
             });
         }, { threshold: 0.1 }); 
 
-        document.querySelectorAll('.reveal-item').forEach(item => {
-            observer.observe(item);
-        });
-        
-        attachCursorEvents(); 
+        function attachCursorEvents() {
+            if(window.innerWidth > 768) {
+                document.querySelectorAll('.interactable').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.getElementById('custom-cursor').classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => document.getElementById('custom-cursor').classList.remove('hovering'));
+                });
+            }
+        }
+
+        renderProducts('all');
 
         function checkAgeModal() {
             if (localStorage.getItem('ageVerified') !== 'true') {
